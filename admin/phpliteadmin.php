@@ -44,7 +44,7 @@
 // Please see https://bitbucket.org/phpliteadmin/public/wiki/Configuration for more details
 
 //password to gain access (set an empty password to disable authentication completely)
-$password = 'admin';
+$password = 'cdmsadmin';
 
 //directory relative to this file to search for databases (if false, manually list databases in the $databases variable)
 $directory = '../sqlite_database';
@@ -683,7 +683,7 @@ class Database
     $classPDO = class_exists("PDO");
     $classSQLite3 = class_exists("SQLite3");
     $classSQLiteDatabase = class_exists("SQLiteDatabase");
-    if ($classPDO)	// PDO is there, check if the SQLite driver for PDO is missing
+    if ($classPDO)  // PDO is there, check if the SQLite driver for PDO is missing
       $PDOSqliteDriver = (in_array("sqlite", PDO::getAvailableDrivers()));
     else
       $PDOSqliteDriver = false;
@@ -990,7 +990,7 @@ class Database
     $result = $this->query($query);
     //make sure the result is valid
     if ($result === false || $result === NULL)
-      return NULL;		// error
+      return NULL;    // error
     if (!is_object($result)) // no rows returned
       return array();
     if ($this->type == "PDO") {
@@ -1034,7 +1034,7 @@ class Database
   {
     //make sure the result is valid
     if ($result === false || $result === NULL)
-      return NULL;		// error
+      return NULL;    // error
     if (!is_object($result)) // no rows returned
       return array();
     if ($this->type == "PDO") {
@@ -1068,7 +1068,7 @@ class Database
   {
     //make sure the result is valid
     if ($result === false || $result === NULL || !is_object($result))
-      return "";		// error or no rows returned
+      return "";    // error or no rows returned
     if ($this->type == "PDO") {
       $meta = $result->getColumnMeta($colNum);
       return $meta['name'];
@@ -1115,7 +1115,7 @@ class Database
       $nameNo = $name;
     }
 
-    $preg =	"(?:'" . $nameSingle . "'|" .   // single-quote surrounded or not in quotes (correct SQL for values/new names)
+    $preg =  "(?:'" . $nameSingle . "'|" .   // single-quote surrounded or not in quotes (correct SQL for values/new names)
       $nameNo . "|" .               // not surrounded (correct SQL if not containing reserved words, spaces or some special chars)
       "\"" . $nameDouble . "\"|" .    // double-quote surrounded (correct SQL for identifiers)
       "`" . $nameBacktick . "`|" .    // backtick surrounded (MySQL-Style)
@@ -1228,9 +1228,9 @@ class Database
           $createindexsql = array();
           $preg_alter_part = "/(?:DROP(?! PRIMARY KEY)(?: COLUMN)?|ADD(?! PRIMARY KEY)(?: COLUMN)?|CHANGE(?: COLUMN)?|RENAME TO|ADD PRIMARY KEY|DROP PRIMARY KEY)" // the ALTER command
             . "(?:"
-            . "\s+\(" . $this->sqlite_surroundings_preg("+", false, "\"'\[`)") . "+\)"	// stuff in brackets (in case of ADD PRIMARY KEY)
-            . "|"																	// or
-            . "\s+" . $this->sqlite_surroundings_preg("+", false, ",'\"\[`")			// column names and stuff like this
+            . "\s+\(" . $this->sqlite_surroundings_preg("+", false, "\"'\[`)") . "+\)"  // stuff in brackets (in case of ADD PRIMARY KEY)
+            . "|"                                  // or
+            . "\s+" . $this->sqlite_surroundings_preg("+", false, ",'\"\[`")      // column names and stuff like this
             . ")*/i";
           if ($debug)
             $this->debugOutput .= "preg_alter_part=(" . $preg_alter_part . ")<br />";
@@ -1266,18 +1266,18 @@ class Database
             if ($debug) $this->debugOutput .= "<hr />def=$def<br />";
             $preg_parse_def =
               "/^(DROP(?! PRIMARY KEY)(?: COLUMN)?|ADD(?! PRIMARY KEY)(?: COLUMN)?|CHANGE(?: COLUMN)?|RENAME TO|ADD PRIMARY KEY|DROP PRIMARY KEY)" // $matches[1]: command
-              . "(?:"												// this is either
-              . "(?:\s+\((.+)\)\s*$)"							// anything in brackets (for ADD PRIMARY KEY)
+              . "(?:"                        // this is either
+              . "(?:\s+\((.+)\)\s*$)"              // anything in brackets (for ADD PRIMARY KEY)
               // then $matches[2] is what there is in brackets
-              . "|"												// OR: 
+              . "|"                        // OR: 
               . "\s+(" . $this->sqlite_surroundings_preg("+", false, " \"'\[`") . ")" //  $matches[3]: (first) column name, possibly including quotes
               // (may be quoted in any type of quotes)
               // in case of RENAME TO, it is the new a table name
-              . "("											// $matches[4]: anything after the column name
-              . "(?:\s+(" . $this->sqlite_surroundings_preg("+", false, " \"'\[`") . "))?"	// $matches[5] (optional): a second column name possibly including quotes 
+              . "("                      // $matches[4]: anything after the column name
+              . "(?:\s+(" . $this->sqlite_surroundings_preg("+", false, " \"'\[`") . "))?"  // $matches[5] (optional): a second column name possibly including quotes 
               //		(may be quoted in any type of quotes)
               . "\s*"
-              . "((?:[A-Z]+\s*)+(?:\(\s*[+-]?\s*[0-9]+(?:\s*,\s*[+-]?\s*[0-9]+)?\s*\))?)?\s*"	// $matches[6] (optional): a type name
+              . "((?:[A-Z]+\s*)+(?:\(\s*[+-]?\s*[0-9]+(?:\s*,\s*[+-]?\s*[0-9]+)?\s*\))?)?\s*"  // $matches[6] (optional): a type name
               . ".*" .
               ")"
               . "?\s*$"
@@ -1298,7 +1298,7 @@ class Database
             if ($action == 'add primary key' && isset($matches[2]) && $matches[2] != '')
               $column = $matches[2];
             elseif ($action == 'drop primary key')
-              $column = '';	// DROP PRIMARY KEY has no column definition
+              $column = '';  // DROP PRIMARY KEY has no column definition
             elseif (isset($matches[3]) && $matches[3] != '')
               $column = $this->sqliteUnquote($matches[3]);
             else
@@ -1316,19 +1316,19 @@ class Database
               4. 'colX+1' ..., ..., 'colK')           $5     (with colX+1-colK being columns after the column to change/drop)
             */
             $preg_create_table = "\s*+(CREATE\s++TABLE\s++" . preg_quote($this->quote($tmpname), "/") . "\s*+\()";   // This is group $1 (keep unchanged)
-            $preg_column_definiton = "\s*+" . $this->sqlite_surroundings_preg("+", true, " '\"\[`,", $column) . "(?:\s*+" . $this->sqlite_surroundings_preg("*", false, "'\",`\[ ") . ")++";		// catches a complete column definition, even if it is
+            $preg_column_definiton = "\s*+" . $this->sqlite_surroundings_preg("+", true, " '\"\[`,", $column) . "(?:\s*+" . $this->sqlite_surroundings_preg("*", false, "'\",`\[ ") . ")++";    // catches a complete column definition, even if it is
             // 'column' TEXT NOT NULL DEFAULT 'we have a comma, here and a double ''quote!'
             // this definition does NOT match columns with the column name $column
             if ($debug) $this->debugOutput .= "preg_column_definition=(" . $preg_column_definiton . ")<br />";
             $preg_columns_before =  // columns before the one changed/dropped (keep)
               "(?:" .
-              "(" .			// group $2. Keep this one unchanged!
+              "(" .      // group $2. Keep this one unchanged!
               "(?:" .
-              "$preg_column_definiton,\s*+" .		// column definition + comma
-              ")*" .								// there might be any number of such columns here
-              $preg_column_definiton .				// last column definition 
-              ")" .			// end of group $2
-              ",\s*+"			// the last comma of the last column before the column to change. Do not keep it!
+              "$preg_column_definiton,\s*+" .    // column definition + comma
+              ")*" .                // there might be any number of such columns here
+              $preg_column_definiton .        // last column definition 
+              ")" .      // end of group $2
+              ",\s*+"      // the last comma of the last column before the column to change. Do not keep it!
               . ")?";    // there might be no columns before
             if ($debug) $this->debugOutput .= "preg_columns_before=(" . $preg_columns_before . ")<br />";
             $preg_columns_after = "(,\s*(.+))?"; // the columns after the column to drop. This is group $3 (drop) or $4(change) (keep!)
@@ -1446,7 +1446,7 @@ class Database
                   CREATE TABLE 't12' ('t1' INTEGER CONSTRAINT  bla  NOT NULL CONSTRAINT 'pk' PRIMARY KEY ); ALTER TABLE "t12" DROP PRIMARY KEY
                   */
                   $preg_column_to_change = "(\s*" . $this->sqlite_surroundings_preg($column) . ")" . // column ($3)
-                    "(?:" .		// opt. type and column constraints
+                    "(?:" .    // opt. type and column constraints
                     "(\s+(?:" . $this->sqlite_surroundings_preg("(?:[^PC,'\"`\[]|P(?!RIMARY\s+KEY)|" .
                       "C(?!ONSTRAINT\s+" . $this->sqlite_surroundings_preg("+", false, " ,'\"\[`") . "\s+PRIMARY\s+KEY))", false, ",'\"`\[") . ")*)" . // column constraints before PRIMARY KEY ($3)
                     // primary key constraint (remove this!):

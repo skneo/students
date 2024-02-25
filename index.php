@@ -3,23 +3,22 @@ $title = "All Students";
 session_start();
 include 'components/login_check.php';
 include 'components/header.php';
-include 'components/navbar.php';
-include 'components/alert.php';
 include 'components/dbCon.php';
 ?>
 
 <div class="container my-3">
   <h4>All Students</h4>
+  <a href="add_student.php">Add</a>
   <!-- table of students -->
   <div class='table-responsive'>
-    <table class="table">
+    <table class="table table-striped table-bordered">
       <thead>
         <tr>
           <th scope="col">#</th>
           <th scope="col" style='position:sticky; left:0'>Name</th>
           <th scope="col">Class</th>
           <th scope="col">Father Name</th>
-          <th scope="col">Address</th>
+          <th scope="col" style='min-width:150px'>Address</th>
           <th scope="col">Phone</th>
           <th scope="col" style='min-width:100px'>Added On</th>
           <th scope="col">Action</th>
